@@ -1,30 +1,45 @@
-// import ProductCard from "./components/ProductCard/ProductCard";
-// import ProfileCard from "./components/ProfileCard/ProfileCard";
-// import Counter from "./components/Counter/Counter";
+import { useEffect, useState } from "react";
+
 import ProfileForm from "./components/ProfileForm/ProfileForm";
+import StudentList from "./components/StudentList/StudentList";
 
 const App = () => {
+    const [mahasiswa, setMahasiswa] = useState(() => {
+        const data = localStorage.getItem("mahasiswa");
+        return data ? JSON.parse(data) : [];
+    });
+    const [selectedStudent, setSelectedStudent] = useState(null);
+
+    useEffect(() => {
+        localStorage.setItem("mahasiswa", JSON.stringify(mahasiswa));
+    }, [mahasiswa]);
+
+    const handleEdit = (item) => {
+        setSelectedStudent(item);
+    };
+
+    const handleHapus = (id) => {
+        setMahasiswa((prev) => prev.filter((item) => item.id !== id));
+        if (selectedStudent?.id === id) {
+            setSelectedStudent(null);
+        }
+    };
+
     return (
         <div>
-            {/* <Counter></Counter> */}
-            <ProfileForm></ProfileForm>
-            {/* <h1>Daftar Produk</h1>
-            <ProductCard></ProductCard>
-            <ProfileCard 
-                nama="Muzayin arifin"
-                jurusan="Teknik Informatika"
-                universitas="Universitas Pamulang"
+            <h1>CRUD Mahasiswa</h1>
+            <ProfileForm
+                key={selectedStudent?.id ?? "new"}
+                setMahasiswa={setMahasiswa}
+                selectedStudent={selectedStudent}
+                setSelectedStudent={setSelectedStudent}
             />
-            <ProfileCard 
-                nama="Andi"
-                jurusan="Sistem informasi"
-                universitas="Universitas Indonesia"
+
+            <StudentList
+                mahasiswa={mahasiswa}
+                onEdit={handleEdit}
+                onHapus={handleHapus}
             />
-            <ProfileCard 
-                nama="Budi"
-                jurusan="Teknik Komputer"
-                universitas="Universitas Brawijaya"
-            /> */}
         </div>
     );
 };

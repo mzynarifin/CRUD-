@@ -1,37 +1,30 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-const ProfileForm = () => {
+const ProfileForm = ({ setMahasiswa, selectedStudent, setSelectedStudent }) => {
     const [formData, setFormData] = useState({
-        nama: "",
-        jurusan: "",
+        nama: selectedStudent?.nama ?? "",
+        jurusan: selectedStudent?.jurusan ?? "",
     });
-    const [mahasiswa, setMahasiswa] = useState(() => {
-        const data = localStorage.getItem("mahasiswa");
-        return data ? JSON.parse(data) : [];
-    });
-    const [editId, setEditId] = useState(null);
-
-    useEffect(() => {
-        localStorage.setItem("mahasiswa", JSON.stringify(mahasiswa));
-    }, [mahasiswa]);
 
     const handleChange = (event) => {
         const { name, value } = event.target;
-        setFormData({ ...formData, [name]: value });
+
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
     };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
+    const handleSubmit = (event) => {
+        event.preventDefault();
         if (!formData.nama || !formData.jurusan) {
-            alert("Form wajib di isi");
+            alert("Form wajib diisi");
             return;
         }
-
-        if (editId !== null) {
+        if (selectedStudent) {
             setMahasiswa((prev) =>
                 prev.map((item) => {
-                    if (item.id === editId) {
+                    if (item.id === selectedStudent.id) {
                         return {
                             ...item,
                             ...formData,
@@ -40,78 +33,59 @@ const ProfileForm = () => {
                     return item;
                 }),
             );
-            setEditId(null);
+            setSelectedStudent(null);
         } else {
             const dataBaru = {
                 id: Date.now(),
                 ...formData,
             };
             setMahasiswa((prev) => [...prev, dataBaru]);
+            setFormData({
+                nama: "",
+                jurusan: "",
+            });
         }
-        setFormData({
-            nama: "",
-            jurusan: "",
-        });
-        console.log(mahasiswa);
     };
 
-    const handleHapus = (id) => {
-        setMahasiswa((prev) => prev.filter((item) => item.id !== id));
-    };
-
-    const handleEdit = (item) => {
-        setFormData({
-            nama: item.nama,
-            jurusan: item.jurusan,
-        });
-
-        setEditId(item.id);
+    const handleBatal = () => {
+        setSelectedStudent(null);
     };
 
     return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <h2>Tambah mahasiswa</h2>
-                <label htmlFor="nama">Nama : </label>
+        <form onSubmit={handleSubmit}>
+            <h2>{selectedStudent ? "Edit Mahasiswa" : "Tambah Mahasiswa"}</h2>
+            <div>
+                <label htmlFor="nama">Nama: </label>
                 <input
-                    type="text"
-                    name="nama"
                     id="nama"
-                    onChange={handleChange}
+                    name="nama"
+                    type="text"
                     value={formData.nama}
+                    onChange={handleChange}
                 />
+            </div>
+
+            <div>
                 <label htmlFor="jurusan">Jurusan: </label>
                 <input
-                    type="text"
-                    name="jurusan"
                     id="jurusan"
-                    onChange={handleChange}
+                    name="jurusan"
+                    type="text"
                     value={formData.jurusan}
+                    onChange={handleChange}
                 />
-                <button type="submit">
-                    {editId !== null ? "Update" : "Simpan"}
-                </button>
-            </form>
-            <div>
-                <h2>Daftar mahasiswa</h2>
-                {mahasiswa.length === 0 ? (
-                    <h3>Belum ada mahasiswa</h3>
-                ) : (
-                    mahasiswa.map((item) => (
-                        <div key={item.id}>
-                            <h3>Nama : {item.nama}</h3>
-                            <p>Jurusan : {item.jurusan}</p>
-                            <button onClick={() => handleEdit(item)}>
-                                Edit
-                            </button>
-                            <button onClick={() => handleHapus(item.id)}>
-                                Hapus
-                            </button>
-                        </div>
-                    ))
-                )}
             </div>
-        </div>
+
+            <button type="submit">
+                {selectedStudent ? "Update" : "Simpan"}
+            </button>
+
+            {selectedStudent && (
+                <button type="button" onClick={handleBatal}>
+                    Batal
+                </button>
+            )}
+        </form>
     );
 };
 
