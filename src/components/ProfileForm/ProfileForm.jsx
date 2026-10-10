@@ -52,39 +52,79 @@ const ProfileForm = ({ setMahasiswa, selectedStudent, setSelectedStudent }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>{selectedStudent ? "Edit Mahasiswa" : "Tambah Mahasiswa"}</h2>
-            <div>
-                <label htmlFor="nama">Nama: </label>
-                <input
-                    id="nama"
-                    name="nama"
-                    type="text"
-                    value={formData.nama}
-                    onChange={handleChange}
-                />
+        <form
+            onSubmit={handleSubmit}
+            className="h-fit border border-zinc-200 bg-white"
+        >
+            <div className="mb-6">
+                <h2 className="text-lg font-semibold text-zinc-950">
+                    {selectedStudent ? "Edit Mahasiswa" : "Tambah Mahasiswa"}
+                </h2>
+                <p className="mt-1 text-sm text-zinc-500">
+                    {selectedStudent
+                        ? "Perbarui informasi mahasiswa."
+                        : "Masukkan informasi mahasiswa baru."}
+                </p>
             </div>
 
-            <div>
-                <label htmlFor="jurusan">Jurusan: </label>
-                <input
-                    id="jurusan"
-                    name="jurusan"
-                    type="text"
-                    value={formData.jurusan}
-                    onChange={handleChange}
-                />
+            <div className="space-y-5">
+                <div>
+                    <label
+                        htmlFor="nama"
+                        className="mb-2 block text-sm font-medium text-zinc-700"
+                    >
+                        Nama
+                    </label>
+
+                    <input
+                        id="nama"
+                        name="nama"
+                        type="text"
+                        value={formData.nama}
+                        onChange={handleChange}
+                        placeholder="Masukkan nama"
+                        className="w-full border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none transition placeholder:text-zinc-400 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                    />
+                </div>
+
+                <div>
+                    <label
+                        htmlFor="jurusan"
+                        className="mb-2 block text-sm font-medium text-zinc-700"
+                    >
+                        Jurusan
+                    </label>
+
+                    <input
+                        id="jurusan"
+                        name="jurusan"
+                        type="text"
+                        value={formData.jurusan}
+                        onChange={handleChange}
+                        placeholder="Masukkan jurusan"
+                        className="w-full border border-zinc-300 bg-white px-3 py-2.5 text-sm outline-none transition placeholder:text-zinc-400 focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600"
+                    />
+                </div>
             </div>
 
-            <button type="submit">
-                {selectedStudent ? "Update" : "Simpan"}
-            </button>
-
-            {selectedStudent && (
-                <button type="button" onClick={handleBatal}>
-                    Batal
+            <div className="mt-6 flex gap-3">
+                <button
+                    type="submit"
+                    className="bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-emerald-700"
+                >
+                    {selectedStudent ? "Update" : "Simpan"}
                 </button>
-            )}
+
+                {selectedStudent && (
+                    <button
+                        type="button"
+                        onClick={handleBatal}
+                        className="border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-700 transition hover:bg-zinc-50"
+                    >
+                        Batal
+                    </button>
+                )}
+            </div>
         </form>
     );
 };
